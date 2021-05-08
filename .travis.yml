@@ -21,4 +21,4 @@ deploy:
   edge: true 
   app: devopslab-paolo
   on:
-      branch: main
+    branch: main
