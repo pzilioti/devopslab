@@ -1,5 +1,7 @@
 # Linguagem Utilizada para Desenvolver a Aplicação
 language: python
+os: linux
+dist: xenial
 
 # Versão que a aplicação suporta.
 python:
@@ -15,7 +17,8 @@ script:
 
 # Definir o Deploy no Heroku
 deploy:
-  provider: heroku
+  provider: herokui
+  strategy: api
   api_key: $HEROKU_API_KEY
   edge: true 
   app: devopslab-paolo
