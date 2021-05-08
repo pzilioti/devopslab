@@ -17,7 +17,7 @@ script:
 
 # Definir o Deploy no Heroku
 deploy:
-  provider: herokui
+  provider: heroku
   strategy: api
   api_key: $HEROKU_API_KEY
   edge: true 
