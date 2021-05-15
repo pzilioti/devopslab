@@ -1,26 +1,58 @@
 # Linguagem Utilizada para Desenvolver a Aplicação
 language: python
-os: linux
-dist: xenial
 
 # Versão que a aplicação suporta.
 python:
-  - "3.8.5"
+  - "3.7.9"
 
-# Instalação de Módulos que são necessários para a Aplicação.
-install:
-  - pip install flask
+os: linux
+dist: xenial
 
-# Defini o script de Teste que deve rodar toda vez que o código for alterado.
-script:
-  - python -m unittest -v test || travis_terminate 1;
+before_install:
+- openssl aes-256-cbc -K $encrypted_12239fba1d62_key -iv $encrypted_12239fba1d62_iv
+  -in labdevopscloud-paolo-9f704effe38d.json.enc -out ../labdevopscloud-paolo-9f704effe38d.json
+  -d
 
-# Definir o Deploy no Heroku
-deploy:
-  provider: heroku
-  strategy: api
-  api_key: $HEROKU_API_KEY
-  edge: true 
-  app: devopslab-paolo
-  on:
-    branch: main
+jobs:
+  include:
+    - stage: Build
+
+      name: "Testes Unitarios"
+      # Instalação de Módulos que são necessários para a Aplicação.
+      install:
+        - pip install flask flask-wtf coverage
+      script:  # Defini o script de Teste que deve rodar toda vez que o código for alterado.
+        - coverage run test.py || travis_terminate 1;
+        - coverage report app.py || travis_terminate 1;
+        - coverage xml app.py || travis_terminate 1;
+
+    - stage: STG Deploy
+      script: skip
+      # Definir o Deploy no Heroku
+      deploy:
+        provider: heroku
+        strategy: api
+        api_key: $HEROKU_API_KEY
+        edge: true
+        app: devopslab-paolo
+        on:
+          branch: main
+
+    - stage: STG TEST
+      script:
+        - curl https://devopslab-paolo.herokuapp.com/ | grep Hello || travis_terminate 1;
+
+    - stage: PROD Deploy
+      script: skip
+      # Definir o Deploy no Google Cloud
+      deploy:
+        provider: gae
+        keyfile: ../labdevopscloud-paolo-9f704effe38d.json
+        project: labdevopscloud-paolo
+        on:
+          branch: main
+
+    - stage: PROD TEST
+      script:
+        - curl https://labdevopscloud-paolo.uc.r.appspot.com/ | grep Hello || travis_terminate 1;
+
