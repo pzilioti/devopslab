@@ -54,5 +54,5 @@ jobs:
 
     - stage: PROD TEST
       script:
-        - curl https://labdevopscloud-paolo.uc.r.appspot.com/ | grep Hello || travis_terminate 1;
+        - curl https://labdevopscloud-paolo.ue.r.appspot.com/ | grep Hello || travis_terminate 1;
 
